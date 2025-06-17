@@ -1,0 +1,13 @@
+### Call api
+POST /api/rpc
+Host: localhost:8080
+Content-Type: application/json
+
+[{
+    "jsonrpc": "2.0",
+    "method": "greet",
+    "params": {
+        "name": "Summer RPC"
+    },
+    "id": "1"
+}]
