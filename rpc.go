@@ -15,13 +15,19 @@ func RpcProxy(conn *rpc.RPC, topic string, timeout int) api.Handler {
 	}
 
 	return func(r *api.Request) *api.Response {
-		var res json.RawMessage
-		err := conn.Request(topic, r.Params, &res, timeout)
+		if r.IsNotification() {
+			conn.Trigger(topic, r.Params)
+			return nil
+		} else {
 
-		if err != nil {
-			return framework.ErrorResponse(r.ID, errors.InternalError(err))
+			var res json.RawMessage
+			err := conn.Request(topic, r.Params, &res, timeout)
+
+			if err != nil {
+				return framework.ErrorResponse(r.ID, errors.InternalError(err))
+			}
+
+			return framework.ResultResponse(r.ID, res)
 		}
-
-		return framework.ResultResponse(r.ID, res)
 	}
 }

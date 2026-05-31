@@ -21,9 +21,11 @@ func main() {
 	rpcConn := rpc.NewRpc(conn, encoding.Json())
 	summer.Register("greet", summerrpc.RpcProxy(rpcConn, "test.greeting", 5))
 
-	disconnected.HttpServer("/", func(s *web.Server) {
-		s.WithRouter(func(e *gin.Engine) {
+	disconnected.HttpServer(func(s *web.Server) error {
+		return s.WithRouter(func(e *gin.Engine) error {
 			e.POST("/api/rpc", summer.HTTP())
+
+			return nil
 		})
 	})
 }
